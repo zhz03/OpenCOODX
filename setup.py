@@ -16,7 +16,7 @@ def _read_requirements_file():
 
 
 setup(
-    name='OpenCOOD',
+    name='opencoodx',
     version=__version__,
     packages=find_packages(),
     url='https://github.com/ucla-mobility/OpenCDA.git',
