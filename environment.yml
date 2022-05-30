@@ -1,9 +1,14 @@
-name: opencood
+name: opencoodx
 channels:
   - defaults
+  - pytorch
 dependencies:
   - pip==21.1.2
   - python==3.7.11
+  - pytorch
+  - torchvision
+  - torchaudio
+  - cudatoolkit=11.3
   - pip:
     - matplotlib==3.4.2
     - numpy
