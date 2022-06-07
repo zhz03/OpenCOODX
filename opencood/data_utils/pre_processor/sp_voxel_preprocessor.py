@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-# Author: Runsheng Xu <rxx3386@ucla.edu>, OpenPCDet
-# License: TDG-Attribution-NonCommercial-NoDistrib
-
 """
 Transform points to voxels using sparse conv library
 """
@@ -9,6 +5,8 @@ import sys
 
 import numpy as np
 import torch
+from cumm import tensorview as tv
+from spconv.utils import Point2VoxelCPU3d
 
 from opencood.data_utils.pre_processor.base_preprocessor import \
     BasePreprocessor
@@ -18,10 +16,6 @@ class SpVoxelPreprocessor(BasePreprocessor):
     def __init__(self, preprocess_params, train):
         super(SpVoxelPreprocessor, self).__init__(preprocess_params,
                                                   train)
-        try:
-            from spconv.utils import VoxelGeneratorV2 as VoxelGenerator
-        except:
-            from spconv.utils import VoxelGenerator
 
         self.lidar_range = self.params['cav_lidar_range']
         self.voxel_size = self.params['args']['voxel_size']
@@ -37,16 +31,18 @@ class SpVoxelPreprocessor(BasePreprocessor):
         self.grid_size = np.round(grid_size).astype(np.int64)
 
         # use sparse conv library to generate voxel
-        self.voxel_generator = VoxelGenerator(
-            voxel_size=self.voxel_size,
-            point_cloud_range=self.lidar_range,
-            max_num_points=self.max_points_per_voxel,
-            max_voxels=self.max_voxels
+        self.voxel_generator = Point2VoxelCPU3d(
+            vsize_xyz=self.voxel_size,
+            coors_range_xyz=self.lidar_range,
+            max_num_points_per_voxel=self.max_points_per_voxel,
+            num_point_features=4,
+            max_num_voxels=self.max_voxels
         )
 
     def preprocess(self, pcd_np):
         data_dict = {}
-        voxel_output = self.voxel_generator.generate(pcd_np)
+        pcd_tv = tv.from_numpy(pcd_np)
+        voxel_output = self.voxel_generator.point_to_voxel(pcd_tv)
         if isinstance(voxel_output, dict):
             voxels, coordinates, num_points = \
                 voxel_output['voxels'], voxel_output['coordinates'], \
@@ -54,9 +50,9 @@ class SpVoxelPreprocessor(BasePreprocessor):
         else:
             voxels, coordinates, num_points = voxel_output
 
-        data_dict['voxel_features'] = voxels
-        data_dict['voxel_coords'] = coordinates
-        data_dict['voxel_num_points'] = num_points
+        data_dict['voxel_features'] = voxels.numpy()
+        data_dict['voxel_coords'] = coordinates.numpy()
+        data_dict['voxel_num_points'] = num_points.numpy()
 
         return data_dict
 
