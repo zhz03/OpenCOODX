@@ -261,7 +261,12 @@ def tensor_to_numpy(det_boxes, det_score, gt_boxes):
         det_score = common_utils.torch_tensor_to_numpy(det_score)
         gt_boxes = common_utils.torch_tensor_to_numpy(gt_boxes)
 
+    else:
+        det_boxes = []
+        det_score = []
+        gt_boxes = []
     return det_boxes, det_score, gt_boxes
+
 
 def main_new(backbone, fusion_method, pretrained):
 
@@ -340,11 +345,79 @@ def main_new(backbone, fusion_method, pretrained):
                                        result_stat,
                                        0.7)
             """
+    """
     eval_utils.eval_final_results(result_stat,
                                   opt.model_dir)
+    """
+
+
+def load_dataset(hypes):
+    print('Dataset Building')
+    opencood_dataset = build_dataset(hypes, visualize=True, train=False)
+    data_loader = DataLoader(opencood_dataset,
+                             batch_size=1,
+                             num_workers=4,
+                             collate_fn=opencood_dataset.collate_batch_test,
+                             shuffle=False,
+                             pin_memory=False,
+                             drop_last=False)
+    return opencood_dataset,data_loader
+
+def model_pred(opt,model,batch_data,opencood_dataset):
+
+    if opt.fusion_method == 'late':
+        pred_box_tensor, pred_score, gt_box_tensor = \
+            inference_utils.inference_late_fusion(batch_data,
+                                                  model,
+                                                  opencood_dataset)
+    elif opt.fusion_method == 'early':
+        pred_box_tensor, pred_score, gt_box_tensor = \
+            inference_utils.inference_early_fusion(batch_data,
+                                                   model,
+                                                   opencood_dataset)
+    elif opt.fusion_method == 'intermediate':
+        pred_box_tensor, pred_score, gt_box_tensor = \
+            inference_utils.inference_intermediate_fusion(batch_data,
+                                                          model,
+                                                          opencood_dataset)
+        """
+        print("pred_box_tensor:", pred_box_tensor)
+        print("pred_score:", pred_score)
+        print("gt_box_tensor:", gt_box_tensor)
+        """
+    else:
+        raise NotImplementedError('Only early, late and intermediate'
+                                  'fusion is supported.')
+    return pred_box_tensor, pred_score, gt_box_tensor
+
+def main_new1(backbone, fusion_method, pretrained):
+    model, opt, hypes = mymodel(backbone, fusion_method, pretrained)
+
+    assert opt.fusion_method in ['late', 'early', 'intermediate']
+    assert not (opt.show_vis and opt.show_sequence), 'you can only visualize ' \
+                                                     'the results in single ' \
+                                                     'image mode or video mode'
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    opencood_dataset,data_loader = load_dataset(hypes)
+
+    for i, batch_data in enumerate(data_loader):
+        print(i)
+        with torch.no_grad():
+            batch_data = train_utils.to_device(batch_data, device)
+            pred_box_tensor, pred_score, gt_box_tensor = model_pred(opt, model, batch_data, opencood_dataset)
+
+            det_boxes, det_score, gt_boxes = tensor_to_numpy(pred_box_tensor, pred_score, gt_box_tensor)
+
+            """
+            print("pred_box:", det_boxes)
+            print("pred_score:", det_score)
+            print("gt_box_tensor:", gt_boxes)
+            """
 
 if __name__ == '__main__':
     backbone = 'pointpillar'
-    fusion_method = 'intermediate'
-    pretrained = 'fc'
-    main_new(backbone,fusion_method,pretrained)
+    fusion_method = 'early' # 'intermediate'
+    pretrained = 'fc' # 'v2v' # require test_culver_city data
+    main_new1(backbone,fusion_method,pretrained)
