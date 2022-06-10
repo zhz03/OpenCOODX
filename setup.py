@@ -7,6 +7,8 @@ from os.path import dirname, realpath
 from setuptools import setup, find_packages, Distribution
 from opencood.version import __version__
 
+with open("README.md", "r", encoding='utf-8') as fh:
+    long_description = fh.read()
 
 def _read_requirements_file():
     """Return the elements in requirements.txt."""
@@ -21,10 +23,11 @@ setup(
     packages=find_packages(),
     url='https://github.com/ucla-mobility/OpenCDA.git',
     license='MIT',
-    author='Runsheng Xu, Hao Xiang',
+    author='Runsheng Xu, Hao Xiang,Zhaoliang Zheng',
     author_email='rxx3386@ucla.edu',
     description='An opensource pytorch framework for autonomous driving '
                 'cooperative detection',
-    long_description=open("README.md").read(),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     install_requires=_read_requirements_file(),
 )
