@@ -203,9 +203,12 @@ def download_googledrive_zipmodel_gdown(url,outputPath,remove_zip=True):
     gdown.download(url,output=outputPath, quiet=False)
     print("INFO: Google file has been downloaded!")
     
+    path = outputPath.split("/")
+    target_path = os.path.join(*path[:-1])
+    
     with ZipFile(outputPath, 'r') as zipObj:
        # Extract all the contents of zip file in current directory
-       zipObj.extractall()
+       zipObj.extractall(path=target_path)
        print("INFO: Google file has been unzipped!")
 
     if remove_zip==True:
