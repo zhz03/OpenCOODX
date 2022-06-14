@@ -1,26 +1,27 @@
-# OpenCOOD
+# OpenCOODX
 [![Documentation Status](https://readthedocs.org/projects/opencood/badge/?version=latest)](https://opencood.readthedocs.io/en/latest/?badge=latest) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 
+## Overview
+
 OpenCOOD is an <strong>Open</strong> <strong>COO</strong>perative <strong>D</strong>etection framework for autonomous driving. It is also the official implementation of the <strong> ICRA 2022  </strong>
-paper [OPV2V.](https://arxiv.org/abs/2109.07644)
+[[Website](https://mobility-lab.seas.ucla.edu/opv2v/)] [[Paper: OPV2V](https://arxiv.org/abs/2109.07644)] [[Documents](https://opencood.readthedocs.io/en/latest/index.html)] [[OpenCOOD](https://github.com/DerrickXuNu/OpenCOOD/tree/main/opencood/utils)]
+
+**opencoodx** is a ready-to-go package of OpenCOOD. You can install it easily by using pip.
+
+### Installation
+
+```shell
+pip install opencoodx
+
+# to upgrade 
+pip install --upgrade opencoodx
+```
 
 <p align="center">
 <img src="images/demo1.gif" width="600" alt="" class="img-responsive">
 <img src="images/camera_demo.gif" width="600"  alt="" class="img-responsive">
 </p>
-
-## News
-**03/17/2022**:  [V2VNet](https://arxiv.org/abs/2008.07519) is supported and the results/trained model are provided in the benchmark table.
-
-**03/10/2022**: Results and pretrained weights for Attentive Fusion with **compression** are provided.
-
-**02/20/2022**: [F-Cooper](https://arxiv.org/abs/1909.06459) now is supported and the results/traiend model can be found in the benchmark table.
-
-**01/31/2022**: Our paper *OPV2V: An Open Benchmark Dataset and Fusion Pipeline for Perception with Vehicle-to-Vehicle Communication* has been accpted by ICRA2022!
-
-**09/21/2021**: OPV2V dataset is public available: https://mobility-lab.seas.ucla.edu/opv2v/
-
 ## Features
 - **Provide easy data API for the Vehicle-to-Vehicle (V2V) multi-modal perception dataset [OPV2V](https://mobility-lab.seas.ucla.edu/opv2v/)**
 
@@ -47,18 +48,63 @@ convert to PyTorch Tesnor directly for model use.
 All the data can be downloaded from [google drive](https://drive.google.com/drive/folders/1dkDeHlwOVbmgXcDazZvO6TFEZ6V_7WUu). If you have a good internet, you can directly
 download the complete large zip file such as `train.zip`. In case you suffer from downloading large fiels, we also split each data set into small chunks, which can be found 
 in the directory ending with `_chunks`, such as `train_chunks`. After downloading, please run the following command to each set to merge those chunks together:
+
 ```python
 cat train.zip.parta* > train.zip
 unzip train.zip
 ```
 
-## Installation
-Please refer to [data introduction](https://opencood.readthedocs.io/en/latest/md_files/data_intro.html)
-and [installation](https://opencood.readthedocs.io/en/latest/md_files/installation.html) guide to prepare
-data and install OpenCOOD. To see more details of OPV2V data, please check [our website.](https://mobility-lab.seas.ucla.edu/opv2v/)
+## Prerequisite
+### 1. Pytorch Installation (>=1.10)
+
+Go to [https://pytorch.org/](https://pytorch.org/) to install pytorch cuda version. Pytorch 1.11 version is recommended.
+
+### 2. S
+
+```
+
+```
+
+### pconv (2.x)
+
+Install spconv 2.x based on your cuda version. For more details, please check: [https://pypi.org/project/spconv/](https://pypi.org/project/spconv/)
 
 ## Quick Start
+### Download Yaml files
+
+You need to download yaml files before you run the code. To download it please run the following command in your terminal:
+
+```shell
+opencoodx --yaml
+```
+
+### Download trained model files
+
+We have 11 trained models that are ready to use:
+
+- pointpillar_attentive_fusion
+- pointpillar_early_fusion
+- pointpillar_fcooper
+- pointpillar_late_fusion
+- v2vnet
+- voxelnet_early_fusion
+- voxelnet_attentive_fusion
+- second_early_fusion
+- second_attentive_fusion
+- second_late_fusion
+- pixor_early_fusion
+
+To download these models, you can run the following command in your terminal:
+
+```shell
+# download all models 
+opencoodx --model all
+# download one model
+opencoodx --model ${above_model_name}
+```
+
 ### Data sequence visualization
+
 To quickly visualize the LiDAR stream in the OPV2V dataset, first modify the `validate_dir`
 in your `opencood/hypes_yaml/visualization.yaml` to the opv2v data path on your local machine, e.g. `opv2v/validate`,
 and the run the following commond:
@@ -73,6 +119,7 @@ Arguments Explanation:
 ### Train your model
 OpenCOOD uses yaml file to configure all the parameters for training. To train your own model
 from scratch or a continued checkpoint, run the following commonds:
+
 ```python
 python opencood/tools/train.py --hypes_yaml ${CONFIG_FILE} [--model_dir  ${CHECKPOINT_FOLDER}]
 ```
@@ -117,8 +164,8 @@ The evaluation results  will be dumped in the model directory.
 | Cooper    | PIXOR        | Early |   7.68/7.68    |   0.678/x      | **0.558**/x      | [url](https://drive.google.com/file/d/1ZDLjtizZCuV6D92LloEPKRIw-LqxfE1j/view?usp=sharing)     | 
 | Attentive         | PIXOR        | Intermediate  |   313.75/1.22  |  **0.687**/**0.612**      | 0.546/**0.492**       | [url]()      |
 
-
 **Note**: 
+
 * We suggest using **PointPillar** as the backbone when you are creating your method and try to compare with
 our benchmark, as we implement most of the SOTA methods with this backbone only.
 * We assume the transimssion rate is 27Mbp/s. Considering the frequency of LiDAR is 10Hz, the 
