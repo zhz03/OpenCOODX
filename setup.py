@@ -23,10 +23,10 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        "matplotlib==3.4.2",
+        "matplotlib",
         "numpy",
         "open3d",
-        "opencv-python==4.5.5.62",
+        "opencv-python",
         "cython",
         "tensorboardX",
         "shapely",
