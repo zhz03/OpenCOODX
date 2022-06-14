@@ -1,3 +1,3 @@
 """Specifies the current version number of OpenCOOD."""
 
-__version__ = "0.1.1"
+__version__ = "0.1.10"
