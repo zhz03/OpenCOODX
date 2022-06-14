@@ -10,6 +10,9 @@ Common utilities
 import numpy as np
 import torch
 from shapely.geometry import Polygon
+import os
+import gdown
+from zipfile import ZipFile
 
 
 def check_numpy_to_torch(x):
@@ -128,7 +131,9 @@ def compute_iou(box, boxes):
     ----------
     box : shapely.geometry.Polygon
         Bounding box Polygon.
-
+import os
+import gdown
+from zipfile import ZipFile
     boxes : list
         List of shapely.geometry.Polygon.
 
@@ -176,3 +181,35 @@ def torch_tensor_to_numpy(torch_tensor):
     """
     return torch_tensor.numpy() if not torch_tensor.is_cuda else \
         torch_tensor.cpu().detach().numpy()
+
+def download_googledrive_zipmodel_gdown(url,outputPath,remove_zip=True):
+    """
+    This function is to download 
+
+    Parameters
+    ----------
+    url : string
+        Google direct download url (Not shared link).
+    outputPath : string
+        Output path.
+    remove_zip : bool, optional
+        If need to remove download zip files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    """
+    gdown.download(url,output=outputPath, quiet=False)
+    print("INFO: Google file has been downloaded!")
+    
+    with ZipFile(outputPath, 'r') as zipObj:
+       # Extract all the contents of zip file in current directory
+       zipObj.extractall()
+       print("INFO: Google file has been unzipped!")
+
+    if remove_zip==True:
+        if os.path.exists(outputPath):
+            os.remove(outputPath)
+            print("INFO: Download zip has been removed!")
+            
