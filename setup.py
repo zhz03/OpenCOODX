@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     url='https://github.com/ucla-mobility/OpenCDA.git',
     license='MIT',
-    author='Runsheng Xu, Hao Xiang,Zhaoliang Zheng',
+    author='Runsheng Xu, Hao Xiang, Zhaoliang Zheng',
     author_email='rxx3386@ucla.edu,zhz03@g.ucla.edu',
     description='An opensource pytorch framework for autonomous driving '
                 'cooperative detection',

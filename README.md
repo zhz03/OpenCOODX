@@ -59,13 +59,7 @@ unzip train.zip
 
 Go to [https://pytorch.org/](https://pytorch.org/) to install pytorch cuda version. Pytorch 1.11 version is recommended.
 
-### 2. S
-
-```
-
-```
-
-### pconv (2.x)
+### 2. Spconv (2.x)
 
 Install spconv 2.x based on your cuda version. For more details, please check: [https://pypi.org/project/spconv/](https://pypi.org/project/spconv/)
 
