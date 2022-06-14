@@ -4,29 +4,21 @@ from opencood.version import __version__
 
 def test_parser():
     parser = argparse.ArgumentParser(description="opencood command")
-    """
-    parser.add_argument('--model_dir', type=str, required=True,
-                        help='Continued training path')
-    """
+
     parser.add_argument("-V","--version",action='store_true',
-                        help="display version",
+                        help="Display version.",
                     )
     parser.add_argument('--model', type=str,
                         default='None',
-                        help="Your model name or use [all] to download all models at once")
-    
+                        help="Your model name or use [all] to download all models at once.")
+    """
     parser.add_argument('--yaml', action='store_true',
-                        help='whether to download all yaml files')
+                        help='whether to download all yaml files.')
     """
-    parser.add_argument('--show_sequence', action='store_true',
-                        help='whether to show video visualization result.'
-                             'it can note be set true with show_vis together ')
-    parser.add_argument('--save_vis', action='store_true',
-                        help='whether to save visualization result')
-    parser.add_argument('--save_npy', action='store_true',
-                        help='whether to save prediction and gt result'
-                             'in npy file')
-    """
+
+    parser.add_argument('--bbx', action='store_true',
+                        help='whether install bbx nms calculation cuda version.')
+
     opt = parser.parse_args()
     return opt
 
@@ -35,7 +27,8 @@ def main():
     
     # sitepath = site.getsitepackages() # a list 
     c_path = os.path.abspath(os.path.dirname(__file__)) # string
-    print("Current Working Directory:" , os.getcwd())
+    previous_path = os.getcwd()
+    print("Current Working Directory:" , previous_path)
     print(c_path)
     os.chdir(c_path)
     print("Current Working Directory After Change:" , os.getcwd()) 
@@ -43,6 +36,7 @@ def main():
     if opt.version:
         print("opencoodx version:",__version__)
         
+    """    
     if opt.yaml:        
         # cmd = 'python ' + ab_path + '/hypes_yaml/download_yaml.py'
         cmd = 'python ' + c_path + '/hypes_yaml/download_yaml.py'
@@ -50,6 +44,7 @@ def main():
         print('Yaml files have been downloaded!')
     else:
         print('Reminder: You need to download yaml files before you run the code!')
+    """
     
     if opt.model == 'None':
         print('Reminder: You need to download trained model before you run the code!')
@@ -57,13 +52,20 @@ def main():
         cmd = 'python ' + c_path + '/model_dir/download_models.py --model ' + opt.model
         os.system(cmd)
         
+    if opt.bbx:
+        print('previous directory:',previous_path)
+        os.chdir(previous_path)
+        print("Current Working Directory After Change:" , os.getcwd())
+        
+        cmd = 'python ' + c_path + '/utils/setup.py build_ext --inplace' 
+        print(cmd)
+        os.system(cmd)
+    else:
+        print('Reminder: You need to install bbx cuda version before you run the code!')
+        
 if __name__ == '__main__':
     main()
-    # path = os. getcwd()
-    # c_path = os.path.abspath(os.path.dirname(__file__))
-    # print(c_path)
-    # os.chdir(c_path)
-    # print("Current Working Directory " , os.getcwd()) 
+
  
 
     
