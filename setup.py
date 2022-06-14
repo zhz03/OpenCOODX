@@ -10,13 +10,6 @@ from opencood.version import __version__
 with open("README.md", "r", encoding='utf-8') as fh:
     long_description = fh.read()
 
-def _read_requirements_file():
-    """Return the elements in requirements.txt."""
-    req_file_path = '%s/requirements.txt' % dirname(realpath(__file__))
-    with open(req_file_path) as f:
-        return [line.strip() for line in f]
-
-
 setup(
     name='opencoodx',
     version=__version__,
@@ -24,10 +17,28 @@ setup(
     url='https://github.com/ucla-mobility/OpenCDA.git',
     license='MIT',
     author='Runsheng Xu, Hao Xiang,Zhaoliang Zheng',
-    author_email='rxx3386@ucla.edu',
+    author_email='rxx3386@ucla.edu,zhz03@g.ucla.edu',
     description='An opensource pytorch framework for autonomous driving '
                 'cooperative detection',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=_read_requirements_file(),
+    install_requires=[
+        "matplotlib==3.4.2",
+        "numpy",
+        "open3d",
+        "opencv-python==4.5.5.62",
+        "cython",
+        "tensorboardX",
+        "shapely",
+        "einops",
+        "easydict",
+        "gdown"
+        ],
+    classifiers=[
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+    ],
+    entry_points={"console_scripts": ["opencoodx=opencood.cood:main"]},
 )
