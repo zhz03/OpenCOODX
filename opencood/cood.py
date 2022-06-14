@@ -1,5 +1,6 @@
 import os
 import argparse
+import site
 
 def test_parser():
     parser = argparse.ArgumentParser(description="opencood command")
@@ -29,8 +30,11 @@ def test_parser():
 def main():
     opt = test_parser()
     
-    if opt.yaml:
-        cmd = 'python opencood/hypes_yaml/download_yaml.py'
+    sitepath = site.getsitepackages() # a list 
+    
+    if opt.yaml:        
+        # cmd = 'python ' + ab_path + '/hypes_yaml/download_yaml.py'
+        cmd = 'python ' + sitepath[0] + '/opencood/hypes_yaml/download_yaml.py'
         os.system(cmd)
         print('Yaml files have been downloaded!')
     
@@ -42,6 +46,9 @@ def main():
         
 if __name__ == '__main__':
     main()
+    # path = os. getcwd()
 
     
+    
+
     

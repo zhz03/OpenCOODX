@@ -1,4 +1,5 @@
 import argparse
+import site
 from opencood.utils.common_utils import download_googledrive_zipmodel_gdown
 
 def test_parser():
@@ -71,8 +72,9 @@ if __name__ == '__main__':
     
     gurls,mnames = gurl_names()
     
-    path = './opencood/model_dir/'
-
+    sitepath = site.getsitepackages()
+    path = sitepath[0] + '/opencood/model_dir/'
+    
     if opt.model== 'all':
         download_all_models(gurls,mnames,path)
     elif opt.model== 'None':
