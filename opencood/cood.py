@@ -30,23 +30,32 @@ def test_parser():
 def main():
     opt = test_parser()
     
-    sitepath = site.getsitepackages() # a list 
-    
+    # sitepath = site.getsitepackages() # a list 
+    c_path = os.path.abspath(os.path.dirname(__file__)) # string
+    print("Current Working Directory:" , os.getcwd())
+    print(c_path)
+    os.chdir(c_path)
+    print("Current Working Directory After Change:" , os.getcwd()) 
     if opt.yaml:        
         # cmd = 'python ' + ab_path + '/hypes_yaml/download_yaml.py'
-        cmd = 'python ' + sitepath[0] + '/opencood/hypes_yaml/download_yaml.py'
+        cmd = 'python ' + c_path + '/hypes_yaml/download_yaml.py'
         os.system(cmd)
         print('Yaml files have been downloaded!')
     
     if opt.model == 'None':
         print('Warning: You need to download trained model before you run the code!')
     else:
-        cmd = 'python opencood/model_dir/download_models.py --model ' + opt.model
+        cmd = 'python ' + c_path + '/model_dir/download_models.py --model ' + opt.model
         os.system(cmd)
         
 if __name__ == '__main__':
     main()
     # path = os. getcwd()
+    # c_path = os.path.abspath(os.path.dirname(__file__))
+    # print(c_path)
+    # os.chdir(c_path)
+    # print("Current Working Directory " , os.getcwd()) 
+ 
 
     
     

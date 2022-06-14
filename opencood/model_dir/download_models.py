@@ -1,5 +1,5 @@
 import argparse
-import site
+import os
 from opencood.utils.common_utils import download_googledrive_zipmodel_gdown
 
 def test_parser():
@@ -49,21 +49,21 @@ def gurl_names():
     
     return gurls,mnames    
 
-def download_all_models(gurls,mnames,path):
+def download_all_models(gurls,mnames):
     
     for i in range(len(gurls)):
         gurl = gurls[i]
         mname = mnames[i]
-        download_googledrive_zipmodel_gdown(gurl,path + mname + '.zip',remove_zip=True)
+        download_googledrive_zipmodel_gdown(gurl,'./' + mname + '.zip',remove_zip=True)
 
-def download_one_model(target_model_name,gurls,mnames,path):
+def download_one_model(target_model_name,gurls,mnames):
     
     if target_model_name in mnames:
         myindex = mnames.index(target_model_name)
         gurl = gurls[myindex]
         mname = mnames[myindex]
         
-        download_googledrive_zipmodel_gdown(gurl,path + mname + '.zip',remove_zip=True) 
+        download_googledrive_zipmodel_gdown(gurl,'./' + mname + '.zip',remove_zip=True) 
     else:
         raise Warning('Your specified model is not in the model list, please double-check your model name!')
         
@@ -72,13 +72,16 @@ if __name__ == '__main__':
     
     gurls,mnames = gurl_names()
     
-    sitepath = site.getsitepackages()
-    path = sitepath[0] + '/opencood/model_dir/'
-    
+    c_path = os.path.abspath(os.path.dirname(__file__)) # string
+    print("Current Working Directory:" , os.getcwd())
+    print(c_path)
+    os.chdir(c_path)
+    print("Current Working Directory After Change:" , os.getcwd()) 
+        
     if opt.model== 'all':
-        download_all_models(gurls,mnames,path)
+        download_all_models(gurls,mnames)
     elif opt.model== 'None':
         raise Warning("Please specify your model! Using --model arguments")
     else:
-        download_one_model(opt.model,gurls,mnames,path)
+        download_one_model(opt.model,gurls,mnames)
 
