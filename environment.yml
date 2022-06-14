@@ -9,6 +9,9 @@ dependencies:
     - matplotlib==3.4.2
     - numpy
     - open3d
+    - setuptools
+    - wheel
+    - twine
     - opencv-python==4.5.5.62
     - cython
     - pygame

@@ -8,4 +8,7 @@ shapely
 einops
 easydict
 gdown
+setuptools
+wheel
+twine
 
