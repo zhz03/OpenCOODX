@@ -72,6 +72,7 @@ if __name__ == '__main__':
     
     gurls,mnames = gurl_names()
     
+    print('Getting into download_models.py')
     c_path = os.path.abspath(os.path.dirname(__file__)) # string
     print("Current Working Directory:" , os.getcwd())
     print(c_path)
