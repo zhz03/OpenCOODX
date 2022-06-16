@@ -24,9 +24,19 @@ def vis_parser():
 
 if __name__ == '__main__':
     current_path = os.path.dirname(os.path.realpath(__file__))
+    
+    print(current_path)
+    upper_path = os.path.dirname(current_path)
+    root_path = os.path.dirname(upper_path)
+    print("root:",root_path)
+    
     params = load_yaml(os.path.join(current_path,
                                     '../hypes_yaml/visualization.yaml'))
-
+    
+    params['root_dir'] = os.path.join(root_path,params['root_dir'])
+    params['validate_dir'] = os.path.join(root_path,params['validate_dir'])
+    # print(params['root_dir'])
+    
     opencda_dataset = EarlyFusionVisDataset(params, visualize=True,
                                             train=False)
     data_loader = DataLoader(opencda_dataset, batch_size=1, num_workers=8,
