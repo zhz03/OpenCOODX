@@ -45,6 +45,10 @@ def model_map(backbone,fusion_method,pretrained=None):
     
     assert opt.fusion_method in ['late', 'early', 'intermediate']
     
+    current_path = os.path.dirname(os.path.realpath(__file__))
+
+    root_path = common_utils.find_root(current_path) 
+    
     if opt.fusion_method == 'intermediate':
         if backbone == 'pointpillar':
             if pretrained == 'af': # 'attentive fusion'
@@ -64,6 +68,8 @@ def model_map(backbone,fusion_method,pretrained=None):
         if backbone == 'voxelnet':
             opt.model_dir = 'opencood/model_dir/voxelnet_early_fusion/'
     
+    opt.model_dir = os.path.join(root_path,opt.model_dir)
+    
     opt.show_vis = False
     opt.show_sequence = False
     opt.save_vis = False
@@ -75,7 +81,11 @@ def mymodel(backbone='pointpillar',fusion_method='intermediate',pretrained='af')
     opt = model_map(backbone,fusion_method,pretrained)
 
     hypes = yaml_utils.load_yaml(None, opt)
-
+    
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    root_path = common_utils.find_root(current_path)    
+    hypes = common_utils.update_hypes_dir(root_path,hypes)
+    
     print('Creating Model')
     model = train_utils.create_model(hypes)
     print('Model created')
@@ -407,9 +417,7 @@ def main_new1(backbone, fusion_method, pretrained):
         with torch.no_grad():
             batch_data = train_utils.to_device(batch_data, device)
             pred_box_tensor, pred_score, gt_box_tensor = model_pred(opt, model, batch_data, opencood_dataset)
-
             det_boxes, det_score, gt_boxes = tensor_to_numpy(pred_box_tensor, pred_score, gt_box_tensor)
-
             """
             print("pred_box:", det_boxes)
             print("pred_score:", det_score)
@@ -418,6 +426,9 @@ def main_new1(backbone, fusion_method, pretrained):
 
 if __name__ == '__main__':
     backbone = 'pointpillar'
-    fusion_method = 'early' # 'intermediate'
-    pretrained = 'fc' # 'v2v' # require test_culver_city data
-    main_new1(backbone,fusion_method,pretrained)
+    fusion_method = 'intermediate' # 'early' #
+    pretrained = 'af' # 'v2v' # require test_culver_city data
+    
+    model,opt,hypes = mymodel(backbone, fusion_method, pretrained)
+    
+    # main_new1(backbone,fusion_method,pretrained)
