@@ -216,3 +216,52 @@ def download_googledrive_zipmodel_gdown(url,outputPath,remove_zip=True):
             os.remove(outputPath)
             print("INFO: Download zip has been removed!")
             
+def root_path_check(path):
+    path_list = path.split("/")
+    if path_list[-1]=='opencood':
+        return True
+    else:
+        return False
+    
+def find_root(path):
+    """
+    Find out the root path of current directory in cood package 
+
+    Parameters
+    ----------
+    path : string
+        abs path for current directory.
+
+    Returns
+    -------
+    root_path : string
+        Root path of current directory
+
+    """
+    if root_path_check(path):
+        root_path = os.path.dirname(path)
+    else:
+        root_path = find_root(os.path.dirname(path))
+    return root_path 
+
+def update_hypes_dir(root_path,hyper_params):
+    """
+    Update the directory path in hyper parameters
+
+    Parameters
+    ----------
+    root_path : string
+        Relative path in hyper parameters.
+
+    Returns
+    -------
+    hyper_params : 
+        hyper parameters after update.
+
+    """
+    hyper_params['root_dir'] = os.path.join(root_path,hyper_params['root_dir'])
+    hyper_params['validate_dir'] = os.path.join(root_path,hyper_params['validate_dir'])
+    return hyper_params
+    
+        
+            
