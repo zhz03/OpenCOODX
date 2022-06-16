@@ -64,14 +64,6 @@ Go to [https://pytorch.org/](https://pytorch.org/) to install pytorch cuda versi
 Install spconv 2.x based on your cuda version. For more details, please check: [https://pypi.org/project/spconv/](https://pypi.org/project/spconv/)
 
 ## Quick Start
-### Download Yaml files
-
-You need to download yaml files before you run the code. To download it please run the following command in your terminal:
-
-```shell
-opencoodx --yaml
-```
-
 ### Download trained model files
 
 We have 11 trained models that are ready to use:
