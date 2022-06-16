@@ -14,6 +14,7 @@ setup(
     name='opencoodx',
     version=__version__,
     packages=find_packages(),
+    package_data={"":["*.yaml","*.pyx"]},
     url='https://github.com/ucla-mobility/OpenCDA.git',
     license='MIT',
     author='Runsheng Xu, Hao Xiang, Zhaoliang Zheng',
