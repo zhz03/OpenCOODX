@@ -418,17 +418,47 @@ def main_new1(backbone, fusion_method, pretrained):
             batch_data = train_utils.to_device(batch_data, device)
             pred_box_tensor, pred_score, gt_box_tensor = model_pred(opt, model, batch_data, opencood_dataset)
             det_boxes, det_score, gt_boxes = tensor_to_numpy(pred_box_tensor, pred_score, gt_box_tensor)
+            
             """
             print("pred_box:", det_boxes)
             print("pred_score:", det_score)
             print("gt_box_tensor:", gt_boxes)
             """
 
+
 if __name__ == '__main__':
+    # ================= parameters =========================
     backbone = 'pointpillar'
     fusion_method = 'intermediate' # 'early' #
     pretrained = 'af' # 'v2v' # require test_culver_city data
-    
-    model,opt,hypes = mymodel(backbone, fusion_method, pretrained)
+    # ================= parameters =========================
+
+    # opencood_dataset,data_loader = load_dataset(hypes)
     
     # main_new1(backbone,fusion_method,pretrained)
+    
+    model, opt, hypes = mymodel(backbone, fusion_method, pretrained)
+
+    assert opt.fusion_method in ['late', 'early', 'intermediate']
+    assert not (opt.show_vis and opt.show_sequence), 'you can only visualize ' \
+                                                     'the results in single ' \
+                                                     'image mode or video mode'
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    print('Dataset Building')
+    opencood_dataset = build_dataset(hypes, visualize=True, train=False)
+    data_loader = DataLoader(opencood_dataset,
+                             batch_size=1,
+                             num_workers=4,
+                             collate_fn=opencood_dataset.collate_batch_test,
+                             shuffle=False,
+                             pin_memory=False,
+                             drop_last=False)
+    
+    for i, batch_data in enumerate(data_loader):
+        print(i)
+        with torch.no_grad():
+            batch_data = train_utils.to_device(batch_data, device)
+            pred_box_tensor, pred_score, gt_box_tensor = model_pred(opt, model, batch_data, opencood_dataset)
+            det_boxes, det_score, gt_boxes = tensor_to_numpy(pred_box_tensor, pred_score, gt_box_tensor)

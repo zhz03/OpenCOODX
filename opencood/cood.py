@@ -19,6 +19,18 @@ def test_parser():
     parser.add_argument('--bbx', action='store_true',
                         help='whether install bbx nms calculation cuda version.')
 
+    parser.add_argument('--data', type=str,
+                        default='None',
+                        help='What dataset you want to download')
+    
+    parser.add_argument('--vis_data', type=str,
+                        default='None',
+                        help='Visualize which dataset')
+    
+    parser.add_argument('--vis_color', type=str,
+                        default='None',
+                        help='Visualized dataset color mode')
+    
     opt = parser.parse_args()
     return opt
 
@@ -56,15 +68,55 @@ def main():
         print('previous directory:',previous_path)
         os.chdir(previous_path)
         print("Current Working Directory After Change:" , os.getcwd())
-        
         cmd = 'python ' + c_path + '/utils/setup.py build_ext --inplace' 
         print(cmd)
         os.system(cmd)
     else:
         print('Reminder: You need to install bbx cuda version before you run the code!')
         
+    if opt.data=='None':
+        print('Reminder: To check data offline,please download dataset!')
+    else:
+        print('previous directory:',previous_path)
+        os.chdir(previous_path)
+        print("Current Working Directory After Change:" , os.getcwd())
+        
+        cmd = 'python ' + c_path + '/visualization/download_dataset.py --data ' + opt.data
+        os.system(cmd) 
+    
+    if opt.vis_data=='None' and opt.vis_color == 'None':
+        print('Reminder:To visualize data,please use --vis_data and --vis_color command!')
+    
+    elif opt.vis_data!='None' and opt.vis_color == 'None':
+        
+        print('previous directory:',previous_path)
+        os.chdir(previous_path)
+        print("Current Working Directory After Change:" , os.getcwd())
+        
+        cmd = 'python ' + c_path + '/visualization/vis_data_sequence.py --data ' + opt.vis_data
+        print('cmd',cmd)
+        os.system(cmd)
+        
+    elif opt.vis_data=='None' and opt.vis_color != 'None':
+        print('previous directory:',previous_path)
+        os.chdir(previous_path)
+        print("Current Working Directory After Change:" , os.getcwd())
+        
+        cmd = 'python ' + c_path + '/visualization/vis_data_sequence.py --color_mode ' + opt.vis_color
+        print('cmd',cmd)
+        os.system(cmd)
+    else:
+        print('previous directory:',previous_path)
+        os.chdir(previous_path)
+        print("Current Working Directory After Change:" , os.getcwd())
+        
+        cmd = 'python ' + c_path + '/visualization/vis_data_sequence.py --data ' + opt.vis_data + ' --color_mode ' + opt.vis_color
+        print('cmd',cmd)
+        os.system(cmd)
+        
 if __name__ == '__main__':
     main()
+    
 
  
 
