@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 
 opv2v_data_dumping/
+
+.idea/

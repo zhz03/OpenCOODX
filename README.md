@@ -19,10 +19,12 @@ pip install --upgrade opencoodx
 ```
 
 <p align="center">
-<img src="images/demo1.gif" width="600" alt="" class="img-responsive">
-<img src="images/camera_demo.gif" width="600"  alt="" class="img-responsive">
+<img src="https://raw.githubusercontent.com/DerrickXuNu/OpenCOOD/main/images/demo1.gif" width="600" alt="" class="img-responsive">
+<img src="https://raw.githubusercontent.com/DerrickXuNu/OpenCOOD/main/images/camera_demo.gif" width="600"  alt="" class="img-responsive">
 </p>
+
 ## Features
+
 - **Provide easy data API for the Vehicle-to-Vehicle (V2V) multi-modal perception dataset [OPV2V](https://mobility-lab.seas.ucla.edu/opv2v/)**
 
     It currently provides easy API to load LiDAR data from multiple agents simultaneously in a structured format and
@@ -44,17 +46,7 @@ convert to PyTorch Tesnor directly for model use.
      attaching new sensors or define additional tasks (e.g. tracking, prediction)
     without changing the events in the initial dataset (e.g. positions and number of all vehicles, traffic speed).
 
-## Data Downloading
-All the data can be downloaded from [google drive](https://drive.google.com/drive/folders/1dkDeHlwOVbmgXcDazZvO6TFEZ6V_7WUu). If you have a good internet, you can directly
-download the complete large zip file such as `train.zip`. In case you suffer from downloading large fiels, we also split each data set into small chunks, which can be found 
-in the directory ending with `_chunks`, such as `train_chunks`. After downloading, please run the following command to each set to merge those chunks together:
-
-```python
-cat train.zip.parta* > train.zip
-unzip train.zip
-```
-
-## Prerequisite
+## Prerequisite - Dependency
 ### 1. Pytorch Installation (>=1.10)
 
 Go to [https://pytorch.org/](https://pytorch.org/) to install pytorch cuda version. Pytorch 1.11 version is recommended.
@@ -63,22 +55,17 @@ Go to [https://pytorch.org/](https://pytorch.org/) to install pytorch cuda versi
 
 Install spconv 2.x based on your cuda version. For more details, please check: [https://pypi.org/project/spconv/](https://pypi.org/project/spconv/)
 
-## Quick Start
-### Download trained model files
+### 3. Bbx IOU cuda version compile
 
-We have 11 trained models that are ready to use:
+Install bbx nms calculation cuda version using following command:
 
-- pointpillar_attentive_fusion
-- pointpillar_early_fusion
-- pointpillar_fcooper
-- pointpillar_late_fusion
-- v2vnet
-- voxelnet_early_fusion
-- voxelnet_attentive_fusion
-- second_early_fusion
-- second_attentive_fusion
-- second_late_fusion
-- pixor_early_fusion
+```shell
+opencoodx --bbx
+```
+
+## Prerequisite - Data files
+
+### 1. Download trained model files
 
 To download these models, you can run the following command in your terminal:
 
@@ -86,49 +73,79 @@ To download these models, you can run the following command in your terminal:
 # download all models 
 opencoodx --model all
 # download one model
-opencoodx --model ${above_model_name}
+opencoodx --model ${model_name}
 ```
+
+Arguments Explanation:
+
+- `all`: To download all models
+
+- `model_name`: We have 11 trained models that are ready to use, you can choose from the following:
+
+  - pointpillar_attentive_fusion
+
+  - pointpillar_early_fusion
+
+  - pointpillar_fcooper
+
+  - pointpillar_late_fusion
+
+  - v2vnet
+
+  - voxelnet_early_fusion
+
+  - voxelnet_attentive_fusion
+
+  - second_early_fusion
+
+  - second_attentive_fusion
+
+  - second_late_fusion
+
+  - pixor_early_fusion
+
+
+### 2. Offline data download (optional)
+
+To download offline dataset, you can simply use the command:
+
+```shell
+opencoodx --data ${dataset_name}
+```
+
+Arguments Explanation:
+
+- `dataset_name`: str type. There are 4 different dataset_name. You can choose from 'test_culver_city', 'test', 'validate' or 'train'
+
+## Quick Start
 
 ### Data sequence visualization
 
-To quickly visualize the LiDAR stream in the OPV2V dataset, first modify the `validate_dir`
-in your `opencood/hypes_yaml/visualization.yaml` to the opv2v data path on your local machine, e.g. `opv2v/validate`,
-and the run the following commond:
-```python
-cd ~/OpenCOOD
-python opencood/visualization/vis_data_sequence.py [--color_mode ${COLOR_RENDERING_MODE}]
+To quickly visualize the LiDAR stream in the OPV2V dataset, you need to download offline data to your current working directory and the run the following command:
+
+```shell
+opencoodx --vis_data ${dataset_name} --vis_color ${color_mode}
 ```
 Arguments Explanation:
+
+- `dataset_name`: str type, including dataset you've download.  You can choose from 'test_culver_city', 'test', 'validate' or 'train'
 - `color_mode` : str type, indicating the lidar color rendering mode. You can choose from 'constant', 'intensity' or 'z-value'.
 
-
-### Train your model
-OpenCOOD uses yaml file to configure all the parameters for training. To train your own model
-from scratch or a continued checkpoint, run the following commonds:
+### Load pre-trained model
 
 ```python
-python opencood/tools/train.py --hypes_yaml ${CONFIG_FILE} [--model_dir  ${CHECKPOINT_FOLDER}]
+from opencood.tools.model import mymodel 
+
+backbone = 'pointpillar'
+fusion_method = 'intermediate' # 'early' #
+pretrained = 'af' # 'v2v' # require test_culver_city data
+
+model,opt,hypes = mymodel(backbone, fusion_method, pretrained)
 ```
-Arguments Explanation:
-- `hypes_yaml`: the path of the training configuration file, e.g. `opencood/hypes_yaml/second_early_fusion.yaml`, meaning you want to train
-an early fusion model which utilizes SECOND as the backbone. See [Tutorial 1: Config System](https://opencood.readthedocs.io/en/latest/md_files/config_tutorial.html) to learn more about the rules of the yaml files.
-- `model_dir` (optional) : the path of the checkpoints. This is used to fine-tune the trained models. When the `model_dir` is
-given, the trainer will discard the `hypes_yaml` and load the `config.yaml` in the checkpoint folder.
 
-### Test the model
-Before you run the following command, first make sure the `validation_dir` in config.yaml under your checkpoint folder
-refers to the testing dataset path, e.g. `opv2v_data_dumping/test`.
+### Use model to detect
 
-```python
-python opencood/tools/inference.py --model_dir ${CHECKPOINT_FOLDER} --fusion_method ${FUSION_STRATEGY} [--show_vis] [--show_sequence]
-```
-Arguments Explanation:
-- `model_dir`: the path to your saved model.
-- `fusion_method`: indicate the fusion strategy, currently support 'early', 'late', and 'intermediate'.
-- `show_vis`: whether to visualize the detection overlay with point cloud.
-- `show_sequence` : the detection results will visualized in a video stream. It can NOT be set with `show_vis` at the same time.
 
-The evaluation results  will be dumped in the model directory.
 
 ## Benchmark and model zoo
 ### Results on OPV2V dataset (AP@0.7 for no-compression/ compression)
